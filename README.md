@@ -5,6 +5,10 @@
 
 [![API Tests](https://code.harvard.edu/CS107/team02_2023/actions/workflows/test.yml/badge.svg?branch=main)](https://code.harvard.edu/CS107/team02_2023/actions/workflows/test.yml) [![Test Coverage](https://code.harvard.edu/CS107/team02_2023/actions/workflows/coverage.yml/badge.svg?branch=main)](https://code.harvard.edu/CS107/team02_2023/actions/workflows/coverage.yml)
 
+# Link to API 
+
+https://test.pypi.org/project/team2-api/
+
 ## API Project Structure
 
 The project is organized into the following structure: 
