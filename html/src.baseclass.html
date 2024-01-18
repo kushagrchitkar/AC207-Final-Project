@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>src.baseclass package &#8212; Galaxy Explorer 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="src package" href="src.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="src-baseclass-package">
+<h1>src.baseclass package<a class="headerlink" href="#src-baseclass-package" title="Link to this heading">¶</a></h1>
+<section id="module-src.baseclass">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.baseclass" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.baseclass.Extractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.baseclass.</span></span><span class="sig-name descname"><span class="pre">Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/baseclass.html#Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.baseclass.Extractor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class extracts spectral data from SDSS server based on input dataframe with parameters. This extractor class includes constructors and relevant specific functions for preprocessing, wavelength alignment, and data augmentation.</p>
+<p>Attributes:
+data (pandas dataframe): The dataframe that contains the meta data information.</p>
+<p>Methods:</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.align_wavelength">
+<span class="sig-name descname"><span class="pre">align_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_of_points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.baseclass.Extractor.align_wavelength" title="Link to this definition">¶</a></dt>
+<dd><p>Aligns wavelength of all spectral objects.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>min_val (int, float): Lower bound for interpolation.
+max_val (int, float): Upper bound for interpolation.
+num_of_points (int): Number of equispaced points to interpolate within bounds.</p>
+</dd>
+<dt>Returns: </dt><dd><p>Dictionary with interpolated flux and common wavelength grid.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If min_val &gt;= max_val.
+ValueError: If num_of_points is non-positive.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.augment_data">
+<span class="sig-name descname"><span class="pre">augment_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">degree</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.baseclass.Extractor.augment_data" title="Link to this definition">¶</a></dt>
+<dd><p>Augment the data associated with the object ID using the specified degree of derivative.</p>
+<p>This method calculates the derivative (first, second, or fractional) of the spectroscopic data
+and appends it to the data in the Extractor’s spec_dict.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>degree (float, int): The degree of the derivative for augmentation.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If an unsupported degree is provided.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.calculate_fractional_derivative">
+<span class="sig-name descname"><span class="pre">calculate_fractional_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.baseclass.Extractor.calculate_fractional_derivative" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the fractional derivative of a given function using the Grünwald-Letnikov approach.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>flux (numpy.ndarray): Array of function values (y-values).
+wave (numpy.ndarray): Array of independent variable values (x-values).
+degree (float): The fractional degree of the derivative.
+h (float): The step size for calculation (default is 1).</p>
+</dd>
+<dt>Returns:</dt><dd><p>numpy.ndarray: Array of the fractional derivative values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.from_params">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/baseclass.html#Extractor.from_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.baseclass.Extractor.from_params" title="Link to this definition">¶</a></dt>
+<dd><p>Executes ADQL query based on input constraints and constructs an instance of the class.</p>
+<p>Parameters:
+min_ra, max_ra, min_dec, max_dec (float): Constraints for the query.</p>
+<p>Raises:
+TypeError: If any of the input parameters are not floats.</p>
+<p>Returns:
+Extractor: An instance of the Extractor class constructed from the query results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.from_query">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/baseclass.html#Extractor.from_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.baseclass.Extractor.from_query" title="Link to this definition">¶</a></dt>
+<dd><p>Executes given ADQL query from DR18 and constructs an instance of the class.</p>
+<p>Parameters:
+query (str): The ADQL query string.</p>
+<p>Raises:
+TypeError: If the input query is not a string.</p>
+<p>Returns:
+Extractor: An instance of the Extractor class constructed from the query results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/baseclass.html#Extractor.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.baseclass.Extractor.get_data" title="Link to this definition">¶</a></dt>
+<dd><p>Getter for dataframe containing params.</p>
+<p>Returns:
+pandas.DataFrame: The dataframe containing parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.get_flux">
+<span class="sig-name descname"><span class="pre">get_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specObjID</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/baseclass.html#Extractor.get_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.baseclass.Extractor.get_flux" title="Link to this definition">¶</a></dt>
+<dd><p>Getter for flux of a particular object. Note the object is expected to be in the dataframe.</p>
+<p>Parameters:
+specObjID: The identifier for the spectral object.</p>
+<p>Returns:
+numpy array: The flux data for the specified object.</p>
+<p>Raises:
+ValueError: If the given specObjID is not part of the dataframe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/baseclass.html#Extractor.get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.baseclass.Extractor.get_params" title="Link to this definition">¶</a></dt>
+<dd><p>Getter params of interest list.</p>
+<p>Returns:
+list: The list of parameters of interest.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.get_spec_dict">
+<span class="sig-name descname"><span class="pre">get_spec_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/baseclass.html#Extractor.get_spec_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.baseclass.Extractor.get_spec_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Getter for spectral data. Note this returns a dictionary.</p>
+<p>Returns:
+dict: A dictionary containing spectral data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.get_wavelength">
+<span class="sig-name descname"><span class="pre">get_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specObjID</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/baseclass.html#Extractor.get_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.baseclass.Extractor.get_wavelength" title="Link to this definition">¶</a></dt>
+<dd><p>Getter for wavelength of a particular object. Note the object is expected to be in the dataframe.</p>
+<p>Parameters:
+specObjID: The identifier for the spectral object.</p>
+<p>Returns:
+numpy array: The wavelength data for the specified object.</p>
+<p>Raises:
+ValueError: If the given specObjID is not part of the dataframe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specObjID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr_wavelength</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.baseclass.Extractor.interpolate" title="Link to this definition">¶</a></dt>
+<dd><p>Interpolates flux as a function of wavelength for the given specObjID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>specObjID (int): Object ID for the spectrum.
+arr_wavelength (array-like): Array of wavelengths for interpolation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>numpy.ndarray: Interpolated flux values.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If an unsupported specObjID is provided.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.normalize_flux">
+<span class="sig-name descname"><span class="pre">normalize_flux</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.baseclass.Extractor.normalize_flux" title="Link to this definition">¶</a></dt>
+<dd><p>Normalizes flux for all spectral objects.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>This particular normaliser applies the StandardScaler by subtracting the mean and dividing by the standard deviation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.redshift_correction">
+<span class="sig-name descname"><span class="pre">redshift_correction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.baseclass.Extractor.redshift_correction" title="Link to this definition">¶</a></dt>
+<dd><p>Corrects observed wavelength into wavelength on Earth and appends the corrected wavelength to the dataframe as ‘lambda_earth’.</p>
+<dl class="simple">
+<dt>Note: </dt><dd><p>In general wavelength_earth = observed_wavelength / (1 + redshift)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.baseclass.Extractor.remove_outliers">
+<span class="sig-name descname"><span class="pre">remove_outliers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.baseclass.Extractor.remove_outliers" title="Link to this definition">¶</a></dt>
+<dd><p>Remove outliers with negative flux.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>Avoid calling normalize_flux() before remove_outliers() as normalisation will transform many flux values into the negatives.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Galaxy Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="src.html">src package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="src.html">src package</a><ul>
+      <li>Previous: <a href="src.html" title="previous chapter">src package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Eunice, Yiyi, Hafsa, Alyssa, Kushagra.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/src.baseclass.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

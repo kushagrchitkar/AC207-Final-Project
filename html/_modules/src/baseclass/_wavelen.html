@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.baseclass._wavelen &#8212; Galaxy Explorer 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.baseclass._wavelen</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">align_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">num_of_points</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Aligns wavelength of all spectral objects. </span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">		min_val (int, float): Lower bound for interpolation.</span>
+<span class="sd">		max_val (int, float): Upper bound for interpolation.</span>
+<span class="sd">		num_of_points (int): Number of equispaced points to interpolate within bounds. </span>
+<span class="sd">		</span>
+<span class="sd">	Returns: </span>
+<span class="sd">		Dictionary with interpolated flux and common wavelength grid.</span>
+<span class="sd">		</span>
+<span class="sd">	Raises:</span>
+<span class="sd">		ValueError: If min_val &gt;= max_val.</span>
+<span class="sd">		ValueError: If num_of_points is non-positive.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># check if min_val is less than max_val and num_of_points is greater than 0</span>
+	<span class="k">if</span> <span class="n">min_val</span> <span class="o">&gt;=</span> <span class="n">max_val</span> <span class="ow">or</span> <span class="n">num_of_points</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error: Please ensure min wavelength is less than max wavelength and number of points is greater than 0.&quot;</span><span class="p">)</span>
+
+	<span class="n">wavelength_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">num_of_points</span><span class="p">)</span>
+	<span class="n">interpolated_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+	<span class="k">for</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># need to use self._spec_dict</span>
+		<span class="n">interpolated_flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">obj_id</span><span class="p">,</span> <span class="n">wavelength_array</span><span class="p">)</span>
+		<span class="n">interpolated_data</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wavelength&#39;</span><span class="p">:</span> <span class="n">wavelength_array</span><span class="p">,</span> <span class="s1">&#39;flux&#39;</span><span class="p">:</span> <span class="n">interpolated_flux</span><span class="p">}</span>
+		
+	<span class="k">return</span> <span class="n">interpolated_data</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Galaxy Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../baseclass.html">src.baseclass</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Eunice, Yiyi, Hafsa, Alyssa, Kushagra.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

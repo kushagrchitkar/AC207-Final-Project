@@ -1,0 +1,20 @@
+The Software consists of a library to help with astronomical research, 
+specifically the classification between stars, galaxies, and QSOs. It 
+interfaces with Sloan Digital Sky Survey (SDSS) services, specifically 
+their databases and APIs containing spectral data and related information. 
+
+Copyright (C) 2023  Yiyi Wang, Eunice Liu, Alyssa Chang, Kushagra Chitkara, 
+Hafsa Mire
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.baseclass &#8212; Galaxy Explorer 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.baseclass</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">SciServer</span> <span class="kn">import</span> <span class="n">SkyQuery</span><span class="p">,</span> <span class="n">SkyServer</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="Extractor">
+<a class="viewcode-back" href="../../src.baseclass.html#src.baseclass.Extractor">[docs]</a>
+<span class="k">class</span> <span class="nc">Extractor</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class extracts spectral data from SDSS server based on input dataframe with parameters. This extractor class includes constructors and relevant specific functions for preprocessing, wavelength alignment, and data augmentation.</span>
+<span class="sd">	</span>
+<span class="sd">	Attributes:</span>
+<span class="sd">	data (pandas dataframe): The dataframe that contains the meta data information. </span>
+
+<span class="sd">	Methods: </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">_params</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;specObjID&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;RUN2D&quot;</span><span class="p">,</span> <span class="s2">&quot;PLATE&quot;</span><span class="p">,</span> <span class="s2">&quot;MJD&quot;</span><span class="p">,</span> <span class="s2">&quot;FIBERID&quot;</span><span class="p">,</span> <span class="s2">&quot;lambdaEff&quot;</span><span class="p">]</span>
+	<span class="n">_DataRelease</span> <span class="o">=</span> <span class="s2">&quot;DR18&quot;</span> <span class="c1"># user is restricted to DR18 since we are extracting spectral data for DR18. </span>
+    
+	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">_valid_df</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Checks if the dataframe is not empty, of correct type, and contains necessary params.</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters:</span>
+<span class="sd">		df (pandas dataframe): The dataframe to validate.</span>
+<span class="sd">		</span>
+<span class="sd">		Raises:</span>
+<span class="sd">		TypeError: If the input is not a dataframe.</span>
+<span class="sd">		ValueError: If the dataframe is empty or lacks necessary parameters.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+			<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Please input a dataframe&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Query range does not contain any objects--try again!&quot;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">Extractor</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query did not include necessary &#39;</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&#39; parameter--try again!&quot;</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Constructs an instance of the class with the given dataframe.</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters:</span>
+<span class="sd">		data (pandas dataframe): The input dataframe containing spectral data parameters.</span>
+<span class="sd">		</span>
+<span class="sd">		Raises:</span>
+<span class="sd">		TypeError: If the input data is not a dataframe.</span>
+<span class="sd">		ValueError: If the dataframe is empty or lacks necessary parameters.</span>
+<span class="sd">		</span>
+<span class="sd">		Note:</span>
+<span class="sd">		The constructor extracts wavelength and flux from FITS files corresponding to the input dataframe&#39;s specObjID, PLATE, MJD, and FIBERID.</span>
+<span class="sd">		The extracted spectral data is stored in a dictionary (_spec_dict) with specObjID as keys and lists of flux and wavelength arrays as values.</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_valid_df</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">Extractor</span><span class="o">.</span><span class="n">_params</span><span class="p">]</span>
+
+		<span class="c1"># Extract wavelength and flux from FITS file</span>
+		<span class="n">spec_dict</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+			<span class="n">spec_obj_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;specObjID&#39;</span><span class="p">]</span>
+			<span class="n">plate</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;PLATE&#39;</span><span class="p">]</span>
+			<span class="n">mjd</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span>
+			<span class="n">fiber_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;FIBERID&#39;</span><span class="p">]</span>
+			<span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;http://dr18.sdss.org/optical/spectrum/view/data/&#39;</span>
+			<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">format=fits/spec=full?plateid=</span><span class="si">{</span><span class="n">plate</span><span class="si">}</span><span class="s2">&amp;mjd=</span><span class="si">{</span><span class="n">mjd</span><span class="si">}</span><span class="s2">&amp;fiberid=</span><span class="si">{</span><span class="n">fiber_id</span><span class="si">}</span><span class="s2">&quot;</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">desired_timeout</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># 10 seconds</span>
+				<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempting to open URL: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+				<span class="n">file</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">desired_timeout</span><span class="p">)</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+				<span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">])</span>
+				<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;loglam&#39;</span><span class="p">])</span>
+				<span class="n">spec_dict</span><span class="p">[</span><span class="n">spec_obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flux</span><span class="p">,</span> <span class="n">wave</span><span class="p">]</span>
+			<span class="k">except</span> <span class="ne">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TimeoutError for specObjID </span><span class="si">{</span><span class="n">spec_obj_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing specObjID </span><span class="si">{</span><span class="n">spec_obj_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span> <span class="o">=</span> <span class="n">spec_dict</span>
+      
+<div class="viewcode-block" id="Extractor.from_query">
+<a class="viewcode-back" href="../../src.baseclass.html#src.baseclass.Extractor.from_query">[docs]</a>
+	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Executes given ADQL query from DR18 and constructs an instance of the class.</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters:</span>
+<span class="sd">		query (str): The ADQL query string.</span>
+<span class="sd">		</span>
+<span class="sd">		Raises:</span>
+<span class="sd">		TypeError: If the input query is not a string.</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">		Extractor: An instance of the Extractor class constructed from the query results.</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># Check if query is string</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+			<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Query should be a string&quot;</span><span class="p">)</span>
+		<span class="c1"># Execute given query</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">SkyServer</span><span class="o">.</span><span class="n">sqlSearch</span><span class="p">(</span><span class="n">sql</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">dataRelease</span><span class="o">=</span><span class="n">Extractor</span><span class="o">.</span><span class="n">_DataRelease</span><span class="p">)</span>
+		<span class="c1"># Call constructor</span>
+		<span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Extractor.from_params">
+<a class="viewcode-back" href="../../src.baseclass.html#src.baseclass.Extractor.from_params">[docs]</a>
+	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">min_ra</span><span class="p">,</span> <span class="n">max_ra</span><span class="p">,</span> <span class="n">min_dec</span><span class="p">,</span> <span class="n">max_dec</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Executes ADQL query based on input constraints and constructs an instance of the class.</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters:</span>
+<span class="sd">		min_ra, max_ra, min_dec, max_dec (float): Constraints for the query.</span>
+<span class="sd">		</span>
+<span class="sd">		Raises:</span>
+<span class="sd">		TypeError: If any of the input parameters are not floats.</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">		Extractor: An instance of the Extractor class constructed from the query results.</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">[</span><span class="n">min_ra</span><span class="p">,</span> <span class="n">max_ra</span><span class="p">,</span> <span class="n">min_dec</span><span class="p">,</span> <span class="n">max_dec</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+				<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&#39; should be a float&quot;</span><span class="p">)</span>
+		<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;SELECT &quot;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Extractor</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; FROM SpecObj WHERE ra &gt; </span><span class="si">{</span><span class="n">min_ra</span><span class="si">}</span><span class="s2"> AND ra &lt; </span><span class="si">{</span><span class="n">max_ra</span><span class="si">}</span><span class="s2"> AND dec &gt; </span><span class="si">{</span><span class="n">min_dec</span><span class="si">}</span><span class="s2"> AND dec &lt; </span><span class="si">{</span><span class="n">max_dec</span><span class="si">}</span><span class="s2">&quot;</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">SkyServer</span><span class="o">.</span><span class="n">sqlSearch</span><span class="p">(</span><span class="n">sql</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">dataRelease</span><span class="o">=</span><span class="n">Extractor</span><span class="o">.</span><span class="n">_DataRelease</span><span class="p">)</span>
+		<span class="c1"># Call constructor</span>
+		<span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+    
+	<span class="c1"># The Extractor class getter functions. These functions facilitate external access to private or protected attributes, promoting encapsulation and offering a controlled means to interact with an instance object&#39;s internal state.</span>
+    
+<div class="viewcode-block" id="Extractor.get_data">
+<a class="viewcode-back" href="../../src.baseclass.html#src.baseclass.Extractor.get_data">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Getter for dataframe containing params.</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">		pandas.DataFrame: The dataframe containing parameters.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
+
+    
+<div class="viewcode-block" id="Extractor.get_params">
+<a class="viewcode-back" href="../../src.baseclass.html#src.baseclass.Extractor.get_params">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Getter params of interest list.</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">		list: The list of parameters of interest.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">Extractor</span><span class="o">.</span><span class="n">_params</span></div>
+
+    
+<div class="viewcode-block" id="Extractor.get_spec_dict">
+<a class="viewcode-back" href="../../src.baseclass.html#src.baseclass.Extractor.get_spec_dict">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_spec_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Getter for spectral data. Note this returns a dictionary.</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">		dict: A dictionary containing spectral data.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span></div>
+
+    
+<div class="viewcode-block" id="Extractor.get_wavelength">
+<a class="viewcode-back" href="../../src.baseclass.html#src.baseclass.Extractor.get_wavelength">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specObjID</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Getter for wavelength of a particular object. Note the object is expected to be in the dataframe.</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters:</span>
+<span class="sd">		specObjID: The identifier for the spectral object.</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">		numpy array: The wavelength data for the specified object.</span>
+<span class="sd">		</span>
+<span class="sd">		Raises:</span>
+<span class="sd">		ValueError: If the given specObjID is not part of the dataframe.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">specObjID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given specObjID not part of dataframe.&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span><span class="p">[</span><span class="n">specObjID</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span></div>
+
+    
+<div class="viewcode-block" id="Extractor.get_flux">
+<a class="viewcode-back" href="../../src.baseclass.html#src.baseclass.Extractor.get_flux">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specObjID</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Getter for flux of a particular object. Note the object is expected to be in the dataframe.</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters:</span>
+<span class="sd">		specObjID: The identifier for the spectral object.</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">		numpy array: The flux data for the specified object.</span>
+<span class="sd">		</span>
+<span class="sd">		Raises:</span>
+<span class="sd">		ValueError: If the given specObjID is not part of the dataframe.</span>
+<span class="sd">        </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">specObjID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given specObjID not part of dataframe.&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span><span class="p">[</span><span class="n">specObjID</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+
+    
+	<span class="c1"># These functions can not imported outside of this Extractor module in the baseclass subdirectory. By importing here inside our Extractor class user has access to it once they import Extractor. </span>
+    
+	<span class="c1"># Preprocessing specific functions to use after extracting spectral data. </span>
+	<span class="kn">from</span> <span class="nn">._prepro</span> <span class="kn">import</span> <span class="n">normalize_flux</span><span class="p">,</span> <span class="n">remove_outliers</span><span class="p">,</span> <span class="n">redshift_correction</span><span class="p">,</span> <span class="n">interpolate</span>
+    
+	<span class="c1"># Wavelenght Alignment specific functions to use after extracting spectral data. </span>
+	<span class="kn">from</span> <span class="nn">._wavelen</span> <span class="kn">import</span> <span class="n">align_wavelength</span>
+    
+	<span class="c1"># Data Augmentation specific functions to use after extracting spectral data. </span>
+	<span class="kn">from</span> <span class="nn">._aug</span> <span class="kn">import</span> <span class="n">calculate_fractional_derivative</span><span class="p">,</span> <span class="n">augment_data</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Galaxy Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Eunice, Yiyi, Hafsa, Alyssa, Kushagra.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

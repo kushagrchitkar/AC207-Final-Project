@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>src package &#8212; Galaxy Explorer 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.baseclass package" href="src.baseclass.html" />
+    <link rel="prev" title="src" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="src-package">
+<h1>src package<a class="headerlink" href="#src-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.baseclass.html">src.baseclass package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.baseclass.html#module-src.baseclass">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor"><code class="docutils literal notranslate"><span class="pre">Extractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.align_wavelength"><code class="docutils literal notranslate"><span class="pre">Extractor.align_wavelength()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.augment_data"><code class="docutils literal notranslate"><span class="pre">Extractor.augment_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.calculate_fractional_derivative"><code class="docutils literal notranslate"><span class="pre">Extractor.calculate_fractional_derivative()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.from_params"><code class="docutils literal notranslate"><span class="pre">Extractor.from_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.from_query"><code class="docutils literal notranslate"><span class="pre">Extractor.from_query()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.get_data"><code class="docutils literal notranslate"><span class="pre">Extractor.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.get_flux"><code class="docutils literal notranslate"><span class="pre">Extractor.get_flux()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.get_params"><code class="docutils literal notranslate"><span class="pre">Extractor.get_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.get_spec_dict"><code class="docutils literal notranslate"><span class="pre">Extractor.get_spec_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.get_wavelength"><code class="docutils literal notranslate"><span class="pre">Extractor.get_wavelength()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.interpolate"><code class="docutils literal notranslate"><span class="pre">Extractor.interpolate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.normalize_flux"><code class="docutils literal notranslate"><span class="pre">Extractor.normalize_flux()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.redshift_correction"><code class="docutils literal notranslate"><span class="pre">Extractor.redshift_correction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor.remove_outliers"><code class="docutils literal notranslate"><span class="pre">Extractor.remove_outliers()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-src.ml">
+<span id="src-ml-module"></span><h2>src.ml module<a class="headerlink" href="#module-src.ml" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.ml.SpectralClassifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.ml.</span></span><span class="sig-name descname"><span class="pre">SpectralClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor" title="src.baseclass.Extractor"><span class="pre">Extractor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ml.html#SpectralClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ml.SpectralClassifier" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A classifier that predicts the class (e.g., star, galaxy) based on spectral data.
+Uses logistic regression from scikit-learn for prediction.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.ml.SpectralClassifier.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ml.html#SpectralClassifier.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ml.SpectralClassifier.fit" title="Link to this definition">¶</a></dt>
+<dd><p>Fit the logistic regression model using the spectral data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (numpy.ndarray): The features (e.g., spectral fluxes).
+y (numpy.ndarray): The target values (e.g., class labels).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.ml.SpectralClassifier.get_confusion_matrix">
+<span class="sig-name descname"><span class="pre">get_confusion_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ml.html#SpectralClassifier.get_confusion_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ml.SpectralClassifier.get_confusion_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the confusion matrix for the given true and predicted labels.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (numpy.ndarray): The features (e.g., spectral fluxes) of the test data.
+y (numpy.ndarray): The true labels for the test data.</p>
+</dd>
+<dt>Returns:</dt><dd><p>numpy.ndarray: The confusion matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.ml.SpectralClassifier.get_features_labels">
+<span class="sig-name descname"><span class="pre">get_features_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ml.html#SpectralClassifier.get_features_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ml.SpectralClassifier.get_features_labels" title="Link to this definition">¶</a></dt>
+<dd><p>Extracts features and labels for model training from the Extractor object.</p>
+<p>This method preprocesses the data and extracts the spectral fluxes as features and astronomical object classes as labels.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>tuple: A tuple containing two numpy.ndarrays: features and labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.ml.SpectralClassifier.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ml.html#SpectralClassifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ml.SpectralClassifier.predict" title="Link to this definition">¶</a></dt>
+<dd><p>Predicts the class labels for the provided spectral data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (numpy.ndarray): The features (e.g., spectral fluxes) for prediction.</p>
+</dd>
+<dt>Returns:</dt><dd><p>numpy.ndarray: An array of predicted class labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.ml.SpectralClassifier.predict_proba">
+<span class="sig-name descname"><span class="pre">predict_proba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ml.html#SpectralClassifier.predict_proba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ml.SpectralClassifier.predict_proba" title="Link to this definition">¶</a></dt>
+<dd><p>Predicts the class probabilities for the provided spectral data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (numpy.ndarray): The features (e.g., spectral fluxes) for which to predict probabilities.</p>
+</dd>
+<dt>Returns:</dt><dd><p>numpy.ndarray: An array of predicted class probabilities.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.ml.SpectralClassifier.preprocess_data">
+<span class="sig-name descname"><span class="pre">preprocess_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ml.html#SpectralClassifier.preprocess_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ml.SpectralClassifier.preprocess_data" title="Link to this definition">¶</a></dt>
+<dd><p>Preprocesses the data by applying several cleaning and normalization steps.</p>
+<p>This method sequentially calls the methods to remove outliers, apply redshift correction, 
+and normalize the flux values in the dataset.</p>
+<p>The preprocessing steps are applied directly to the data within the Extractor object, 
+modifying its state.</p>
+<p>No arguments are taken and no values are returned, as the function operates directly on 
+the Extractor’s data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.ml.SpectralClassifier.split_data">
+<span class="sig-name descname"><span class="pre">split_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ml.html#SpectralClassifier.split_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ml.SpectralClassifier.split_data" title="Link to this definition">¶</a></dt>
+<dd><p>Splits the spectral data into training and test sets.</p>
+<p>This method uses the extracted features and labels to create a training set and a test set. The size of the test set is determined by the test_size argument.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>test_size (float, optional): The proportion of the dataset to include in the test split. Defaults to 0.2.
+random_state (int, optional): Controls the shuffling applied to the data before applying the split. Defaults to None.</p>
+</dd>
+<dt>Returns:</dt><dd><p>tuple: A tuple containing the training data split (features and labels) and the test data split (features and labels).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.viz">
+<span id="src-viz-module"></span><h2>src.viz module<a class="headerlink" href="#module-src.viz" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.viz.Visualization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.viz.</span></span><span class="sig-name descname"><span class="pre">Visualization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.baseclass.html#src.baseclass.Extractor" title="src.baseclass.Extractor"><span class="pre">Extractor</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/viz.html#Visualization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.viz.Visualization" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class provides specialised plotting features to visualise the spectrum of stellar objects contained within an Extractor class instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.viz.Visualization.onselect">
+<span class="sig-name descname"><span class="pre">onselect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eclick</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erelease</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/viz.html#Visualization.onselect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.viz.Visualization.onselect" title="Link to this definition">¶</a></dt>
+<dd><p>Prints integrated flux via the inferred continuum within selected region.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>eclick (motion): motion trigger
+erelease (motion): motion trigger</p>
+</dd>
+<dt>Note:</dt><dd><p>If selected bound is beyond wavelength range, integrated flux will evaluate to ‘nan’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.viz.Visualization.visualize">
+<span class="sig-name descname"><span class="pre">visualize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specObjID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moving_window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interactive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/viz.html#Visualization.visualize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.viz.Visualization.visualize" title="Link to this definition">¶</a></dt>
+<dd><p>Generates plot of given object’s spectrum.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>specObjID (int): The stellar object to generate spectral plot for.
+moving_window_size (int): Window size to use in calculating the inferred continuum.
+interactive (bool): True for interactive mode, False otherwise.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If given specObjID is not contained in class instance.
+ValueError: If moving_window_size is not a positive integer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.viz.Visualization.visualize_interactive">
+<span class="sig-name descname"><span class="pre">visualize_interactive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/viz.html#Visualization.visualize_interactive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.viz.Visualization.visualize_interactive" title="Link to this definition">¶</a></dt>
+<dd><p>Generates interactive plot of an object’s spectrum according to selected region.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>Y-values have no affect on the integration results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Galaxy Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">src package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">src</a></li>
+      <li>Next: <a href="src.baseclass.html" title="next chapter">src.baseclass package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Eunice, Yiyi, Hafsa, Alyssa, Kushagra.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/src.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

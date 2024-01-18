@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.viz &#8212; Galaxy Explorer 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.viz</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.baseclass</span> <span class="kn">import</span> <span class="n">Extractor</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">matplotlib.widgets</span> <span class="kn">import</span> <span class="n">RectangleSelector</span><span class="p">,</span> <span class="n">Button</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">trapz</span>
+
+<div class="viewcode-block" id="Visualization">
+<a class="viewcode-back" href="../../src.html#src.viz.Visualization">[docs]</a>
+<span class="k">class</span> <span class="nc">Visualization</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class provides specialised plotting features to visualise the spectrum of stellar objects contained within an Extractor class instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">Extractor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates instance of Visualization class. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            extractor (Extractor): The Extractor class instance to enhance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span> <span class="o">=</span> <span class="n">extractor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Visualization.onselect">
+<a class="viewcode-back" href="../../src.html#src.viz.Visualization.onselect">[docs]</a>
+    <span class="k">def</span> <span class="nf">onselect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eclick</span><span class="p">,</span> <span class="n">erelease</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints integrated flux via the inferred continuum within selected region. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            eclick (motion): motion trigger</span>
+<span class="sd">            erelease (motion): motion trigger</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If selected bound is beyond wavelength range, integrated flux will evaluate to &#39;nan&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get x,y values of selected region</span>
+        <span class="n">x_start</span><span class="p">,</span> <span class="n">x_end</span> <span class="o">=</span> <span class="n">eclick</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">erelease</span><span class="o">.</span><span class="n">xdata</span>
+
+        <span class="c1"># Get wavelength and inferred continuum</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">wave</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;wavelength&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">incont</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;inferred_continuum&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># Apply masks to isolate values within x-bounds</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">wave</span> <span class="o">&gt;=</span> <span class="n">x_start</span>
+        <span class="n">wave_removelow</span><span class="p">,</span> <span class="n">incont__removelow</span> <span class="o">=</span> <span class="n">wave</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">incont</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">mask2</span> <span class="o">=</span> <span class="n">wave_removelow</span> <span class="o">&lt;=</span> <span class="n">x_end</span>
+        <span class="n">wave_inbound</span> <span class="p">,</span> <span class="n">incont_inbound</span> <span class="o">=</span> <span class="n">wave_removelow</span><span class="p">[</span><span class="n">mask2</span><span class="p">],</span> <span class="n">incont__removelow</span><span class="p">[</span><span class="n">mask2</span><span class="p">]</span>
+
+        <span class="c1"># Print integrated flux value</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wave_inbound</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">integrated_flux</span> <span class="o">=</span> <span class="n">trapz</span><span class="p">(</span><span class="n">incont_inbound</span><span class="p">,</span> <span class="n">wave_inbound</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Integrated flux for wavelength in [</span><span class="si">{</span><span class="n">x_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">x_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">integrated_flux</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Visualization.visualize">
+<a class="viewcode-back" href="../../src.html#src.viz.Visualization.visualize">[docs]</a>
+    <span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specObjID</span><span class="p">,</span> <span class="n">moving_window_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">interactive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates plot of given object&#39;s spectrum.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            specObjID (int): The stellar object to generate spectral plot for.</span>
+<span class="sd">            moving_window_size (int): Window size to use in calculating the inferred continuum.</span>
+<span class="sd">            interactive (bool): True for interactive mode, False otherwise.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If given specObjID is not contained in class instance.</span>
+<span class="sd">            ValueError: If moving_window_size is not a positive integer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check specObjID is in current Extractor instance</span>
+        <span class="k">if</span> <span class="n">specObjID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">_spec_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given specObjID not part of the dataset.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Check for valid moving_window_size</span>
+        <span class="k">if</span> <span class="n">moving_window_size</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">moving_window_size</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;moving_window_size&#39; must be positive integer.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract wavelength and flux</span>
+        <span class="n">wavelength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">get_wavelength</span><span class="p">(</span><span class="n">specObjID</span><span class="p">)</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">get_flux</span><span class="p">(</span><span class="n">specObjID</span><span class="p">)</span>
+
+        <span class="c1"># Calculate inferred continuum</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;wavelength&#39;</span><span class="p">:</span> <span class="n">wavelength</span><span class="p">,</span> <span class="s1">&#39;flux&#39;</span><span class="p">:</span> <span class="n">flux</span><span class="p">})</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;inferred_continuum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">moving_window_size</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
+
+        <span class="c1"># Plot the flux over wavelength</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;wavelength&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Flux&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Plot the inferred continuum</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;wavelength&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;inferred_continuum&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Inferred Continuum&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Object ID: </span><span class="si">{</span><span class="n">specObjID</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wavelength ($</span><span class="se">\\</span><span class="s1">AA$)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Flux</span><span class="se">\n</span><span class="s1">($10^</span><span class="si">{</span><span class="o">-</span><span class="mi">17</span><span class="si">}</span><span class="s1">$ erg/s/cm$^2$/Å)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visualize_interactive</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Visualization.visualize_interactive">
+<a class="viewcode-back" href="../../src.html#src.viz.Visualization.visualize_interactive">[docs]</a>
+    <span class="k">def</span> <span class="nf">visualize_interactive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates interactive plot of an object&#39;s spectrum according to selected region.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Y-values have no affect on the integration results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create a RectangleSelector</span>
+        <span class="n">rs</span> <span class="o">=</span> <span class="n">RectangleSelector</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">onselect</span><span class="p">,</span> <span class="n">useblit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">button</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">minspanx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">minspany</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">spancoords</span><span class="o">=</span><span class="s1">&#39;pixels&#39;</span><span class="p">,</span> <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Show the plot</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Galaxy Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Eunice, Yiyi, Hafsa, Alyssa, Kushagra.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

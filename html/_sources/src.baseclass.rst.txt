@@ -1,0 +1,10 @@
+src.baseclass package
+=====================
+
+Module contents
+---------------
+
+.. automodule:: src.baseclass
+   :members:
+   :undoc-members:
+   :show-inheritance:

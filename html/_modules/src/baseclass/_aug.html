@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.baseclass._aug &#8212; Galaxy Explorer 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.baseclass._aug</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">binom</span>
+
+<span class="k">def</span> <span class="nf">calculate_fractional_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the fractional derivative of a given function using the Grünwald-Letnikov approach.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        flux (numpy.ndarray): Array of function values (y-values).</span>
+<span class="sd">        wave (numpy.ndarray): Array of independent variable values (x-values).</span>
+<span class="sd">        degree (float): The fractional degree of the derivative.</span>
+<span class="sd">        h (float): The step size for calculation (default is 1).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: Array of the fractional derivative values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+    <span class="n">fractional_derivative</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="c1"># Adjust h based on the wavelength array, if necessary</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wave</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">wave</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wave</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">sum_series</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">binomial_coefficient</span> <span class="o">=</span> <span class="n">binom</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="n">sum_series</span> <span class="o">+=</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">binomial_coefficient</span> <span class="o">*</span> <span class="n">flux</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">k</span><span class="p">]</span>
+
+        <span class="n">fractional_derivative</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum_series</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">**</span> <span class="n">degree</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fractional_derivative</span>
+
+<span class="k">def</span> <span class="nf">augment_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">degree</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Augment the data associated with the object ID using the specified degree of derivative.</span>
+
+<span class="sd">    This method calculates the derivative (first, second, or fractional) of the spectroscopic data</span>
+<span class="sd">    and appends it to the data in the Extractor&#39;s spec_dict.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        degree (float, int): The degree of the derivative for augmentation.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If an unsupported degree is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">specObj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_flux</span><span class="p">(</span><span class="n">specObj</span><span class="p">)</span>
+        <span class="n">wave</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelength</span><span class="p">(</span><span class="n">specObj</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">degree</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">derivative</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">wave</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">wave</span><span class="p">)</span>
+                <span class="n">derivative</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">first_derivative</span><span class="p">,</span> <span class="n">wave</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">degree</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">and</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">derivative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_fractional_derivative</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported degree: </span><span class="si">{</span><span class="n">degree</span><span class="si">}</span><span class="s2">. Degree must be a positive integer or float.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spec_dict</span><span class="p">[</span><span class="n">specObj</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">derivative</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Galaxy Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../baseclass.html">src.baseclass</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Eunice, Yiyi, Hafsa, Alyssa, Kushagra.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
